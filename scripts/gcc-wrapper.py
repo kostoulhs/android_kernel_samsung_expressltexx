@@ -87,6 +87,11 @@ allowed_warnings = set([
     "mipi_NT35510.c:545",
     "mipi_NT35510.c:572",
     "mipi_NT35510.c:625",
+    "cypress-touchkey.c:967",
+    "mipi_magna_oled.c:671",
+    "mipi_magna_oled.c:759",
+    "mipi_magna_oled.c:786",
+    "mipi_magna_oled.c:840",
  ])
 
 # Capture the name of the object file, can find it.
