@@ -108,7 +108,7 @@
 #include <linux/i2c/taos.h>
 #endif
 #ifdef CONFIG_NFC_PN547
-#include <linux/pn544.h>
+#include <linux/pn547.h>
 #endif
 
 
@@ -929,9 +929,9 @@ err_irq_gpio_leda_req:
 #endif
 
 #ifdef CONFIG_NFC_PN547
-static void pn544_conf_gpio(void)
+static void pn547_conf_gpio(void)
 {
-	pr_debug("pn544_conf_gpio\n");
+	pr_debug("pn547_conf_gpio\n");
 
 	gpio_tlmm_config(GPIO_CFG(GPIO_NFC_SDA, 0, GPIO_CFG_INPUT,
 		GPIO_CFG_NO_PULL, GPIO_CFG_2MA), 1);
@@ -939,47 +939,49 @@ static void pn544_conf_gpio(void)
 		GPIO_CFG_NO_PULL, GPIO_CFG_2MA), 1);
 }
 
-static int __init pn544_init(void)
+static int __init pn547_init(void)
 {
 	gpio_tlmm_config(GPIO_CFG(GPIO_NFC_IRQ, 0, GPIO_CFG_INPUT,
 		GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), 1);
 	gpio_tlmm_config(GPIO_CFG(GPIO_NFC_CLK_REQ, 0, GPIO_CFG_INPUT,
 		GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), 1);
 
-	pn544_conf_gpio();
+	pn547_conf_gpio();
 	return 0;
 }
 #endif
 
 #ifdef CONFIG_NFC_PN547
-static struct i2c_gpio_platform_data pn544_i2c_gpio_data = {
+static struct i2c_gpio_platform_data pn547_i2c_gpio_data = {
 	.sda_pin = GPIO_NFC_SDA,
 	.scl_pin = GPIO_NFC_SCL,
 	.udelay = 5,
 };
 
-static struct platform_device pn544_i2c_gpio_device = {
+static struct platform_device pn547_i2c_gpio_device = {
 	.name = "i2c-gpio",
 	.id = MSM_NFC_I2C_BUS_ID,
 	.dev = {
-		.platform_data = &pn544_i2c_gpio_data,
+		.platform_data = &pn547_i2c_gpio_data,
 	},
 };
 
-static struct pn544_i2c_platform_data pn544_pdata = {
-	.conf_gpio = pn544_conf_gpio,
+static struct pn547_i2c_platform_data pn547_pdata = {
+	.conf_gpio = pn547_conf_gpio,
 	.irq_gpio = GPIO_NFC_IRQ,
 	.ven_gpio = GPIO_NFC_EN,
 	.firm_gpio = GPIO_NFC_FIRMWARE,
+#ifdef CONFIG_NFC_PN547_CLOCK_REQUEST
 	.clk_req_gpio = GPIO_NFC_CLK_REQ,
 	.clk_req_irq = MSM_GPIO_TO_INT(GPIO_NFC_CLK_REQ),
+#endif
 };
 
-static struct i2c_board_info pn544_info[] __initdata = {
+static struct i2c_board_info pn547_info[] __initdata = {
 	{
-		I2C_BOARD_INFO("pn544", 0x2b),
+		I2C_BOARD_INFO("pn547", 0x2b),
 		.irq = MSM_GPIO_TO_INT(GPIO_NFC_IRQ),
-		.platform_data = &pn544_pdata,
+		.platform_data = &pn547_pdata,
 	},
 };
 #endif
@@ -3280,7 +3282,7 @@ static struct platform_device *common_devices[] __initdata = {
 	&opt_i2c_gpio_device,
 #endif
 #ifdef CONFIG_NFC_PN547
-	&pn544_i2c_gpio_device,
+	&pn547_i2c_gpio_device,
 #endif
 
 #ifdef CONFIG_ANDROID_RAM_CONSOLE
@@ -3591,8 +3593,8 @@ static struct i2c_registry msm8930_i2c_devices[] __initdata = {
 #ifdef CONFIG_NFC_PN547
 	{
 		MSM_NFC_I2C_BUS_ID,
-		pn544_info,
-		ARRAY_SIZE(pn544_info),
+		pn547_info,
+		ARRAY_SIZE(pn547_info),
 	},
 #endif
 #ifdef CONFIG_OPTICAL_TAOS_TRITON
@@ -3952,7 +3954,7 @@ void __init msm8930_express2_init(void)
 	msm8930_mhl_gpio_init();
 #endif
 #ifdef CONFIG_NFC_PN547
-	pn544_init();
+	pn547_init();
 #endif
 #ifdef CONFIG_INPUT_YAS_SENSORS
 	sensor_device_init();
