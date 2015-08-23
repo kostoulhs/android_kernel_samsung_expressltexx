@@ -109,16 +109,8 @@ choice
 	config DEFAULT_NOOP
 		bool "No-op"
 
-<<<<<<< HEAD
-=======
-	config DEFAULT_SIO
-		bool "SIO" if IOSCHED_SIO=y
-
-
 	config DEFAULT_ZEN
 		bool "ZEN" if IOSCHED_ZEN=y
-
->>>>>>> d8f19e7... block: added zen I/O scheduler
 endchoice
 
 config DEFAULT_IOSCHED
